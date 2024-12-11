@@ -1,9 +1,10 @@
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Cinema {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int row, col, option;
+        int row, col, option, count=0;
         System.out.println("====== [ Please set up the seat ] ======");
         while (true){
             System.out.print("  [+] Enter row : "); row = sc.nextInt();
@@ -14,19 +15,20 @@ public class Cinema {
                 break;
             }
         }
+
         String[][] cinema = new String[row][col];
         char letter = 'A';
         for (int i = 0; i < row; i++) {
+            System.out.print("| ");
             for (int j = 0; j < col; j++) {
                 cinema[i][j] = letter + "-" + (j+1) +" : AV";
+                System.out.print(cinema[i][j] + " ");
+                if (j < col - 1) {
+                    System.out.print(", ");
+                }
             }
             letter++;
-        }
-        for (int i = 0; i < cinema.length; i++) {
-            for (int j = 0; j < col; j++) {
-                System.out.print(cinema[i][j]+ " , ");
-            }
-            System.out.println();
+            System.out.println(" |");
         }
 
         do {
@@ -44,47 +46,65 @@ public class Cinema {
             switch (option){
                 case 1:{
                     String seat;
-                    boolean isFound = false;
                     System.out.println("==== [ Book the seat ] ====");
-                    System.out.print("please choose you seat (A-1) : ");
                     sc.nextLine();
-                    seat = sc.nextLine();
-
-                    for (int i = 0; i < row; i++) {
-                        for (int j = 0; j < col; j++) {
-                            if (cinema[i][j].startsWith(seat) && cinema[i][j].endsWith("AV")){
+                    outerLoop:
+                    while (true){
+                        System.out.print("Code seat sample ( A-1 ) : ");
+                        seat = sc.nextLine();
+                        for (int i = 0; i < row; i++) {
+                            for (int j = 0; j < col; j++) {
+                                if (cinema[i][j].startsWith(seat) && cinema[i][j].endsWith("BO")){
+                                    System.out.println("This seat already booked");
+                                    continue outerLoop;
+                                }else if(cinema[i][j].startsWith(seat) && cinema[i][j].endsWith("AV")){
                                     cinema[i][j] = seat + " : BO";
+                                    count++;
                                     System.out.println("Booked success on Seat : " + seat);
-                                    break;
+                                    break outerLoop;
+                                }
                             }
                         }
+                        System.out.println("Make sure you choose correct code seat");
                     }
-                    if(!isFound) System.out.println("This seat already booked");
                     break;
                 }
                 case 2:{
+                    String cancelSeat;
+                    boolean isCancel = false;
                     System.out.println("===== [ Cancel Seat ] =====");
                     System.out.print("Enter Seat to cancel : ");
                     sc.nextLine();
-                    String cancelSeat = sc.nextLine();
+                    cancelSeat = sc.nextLine();
                     for (int i = 0; i < row; i++) {
                         for (int j = 0; j < col; j++) {
-                            if (cinema[i][j].startsWith(cancelSeat) && cinema[i][j].endsWith(" BO")){
-                                cinema[i][j] = cancelSeat + " AV";
+                            if(cinema[i][j].startsWith(cancelSeat) && cinema[i][j].endsWith("BO")){
+                                cinema[i][j] = cancelSeat + " : AV";
+                                System.out.println("Seat "+cancelSeat+ " Cancel success");
+                                isCancel = true;
+                            }else if (cinema[i][j].startsWith(cancelSeat) && cinema[i][j].endsWith("AV")){
+                                System.out.println("This Seat never booked");
                             }
                         }
                     }
+
                     break;
                 }
                 case 3:{
                     for (int i = 0; i < cinema.length; i++) {
+                        System.out.print("| ");
                         for (int j = 0; j < col; j++) {
-                            System.out.print(cinema[i][j]+ " ");
+                            System.out.print(cinema[i][j] + " ");
+                            if (j < col - 1) {
+                                System.out.print(", ");
+                            }
                         }
-                        System.out.println();
+                        System.out.println(" |");
                     }
                     break;
                 }
+                default:
+                    System.out.println("Invalid option!!!"); break;
             }
         }while (option !=5);
 
